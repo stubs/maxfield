@@ -25,6 +25,7 @@ Original concept by jpeterbaker
 January 2020 - A complete re-write of original Ingress Maxfield.
 """
 
+import json
 import time
 
 from .plan import Plan
@@ -32,7 +33,43 @@ from .results import Results
 
 __version__ = '4.0'
 
-def read_portal_file(filename):
+def read_portal_json(filename):
+    """
+    Read a formatted portal json file and return a list of portal
+    coordinates
+
+    Inputs:
+      filename :: string
+        The filename for the portal list
+
+    Returns: portals
+      portals :: N-length array of dictionaries
+        For each portal:
+        'name' the portal name
+        'lon' the longitude in degrees
+        'lat' the latitude in degrees
+        'keys' the number of keys in hand for this portal
+        'sbul' True if portal has SBUL
+    """
+
+    portals = []
+    with open(filename, 'r') as fin:
+        portal_data = json.loads(fin.read())
+        for item in portal_data:
+            name = item['title'].strip()
+            lon = item['lngE6']/1E6
+            lat = item['latE6']/1E6
+
+            # TODO keys & sbul need to be implemented
+            keys = 0
+            sbul = False
+
+            portals.append({'name':name, 'lon':lon, 'lat':lat,
+                            'keys': keys, 'sbul': sbul})
+    return portals
+
+
+def read_portal_text_file(filename):
     """
     Read a formatted portal file and return a list of portal
     coordinates
@@ -197,7 +234,11 @@ def maxfield(filename, num_agents=1, num_field_iterations=1000,
     #
     # Read portal file
     #
-    portals = read_portal_file(filename)
+    if '.json' in filename:
+        portals = read_portal_json(filename)
+    else:
+        portals = read_portal_file(filename)
+
     if verbose:
         print("Found {0} portals in portal file: {1}".
               format(len(portals), filename))

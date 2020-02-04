@@ -36,7 +36,7 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument(
     'filename', type=str,
-    help='The properly formatted portal file.')
+    help='The properly formatted portal text/JSON file.')
 parser.add_argument(
     '--version', action='version',
     version='Ingress Maxfield v{0}'.format(maxfield.__version__))
